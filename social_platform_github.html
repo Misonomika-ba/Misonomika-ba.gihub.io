@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简约社交平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .login-form, .post-form, .post-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form {
+            text-align: center;
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .post-item {
+            position: relative;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .post-author {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .post-time {
+            color: #657786;
+            font-size: 14px;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-display {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-display:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .file-input-display.has-file {
+            border-color: #28a745;
+            color: #28a745;
+            background: #d4edda;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .admin-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .posts-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .posts-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .posts-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .posts-container::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+        }
+
+        .posts-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.5);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #657786;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录表单 -->
+        <div id="loginSection" class="fade-in">
+            <div class="welcome-message">
+                <h1>🌟 简约社交平台</h1>
+                <p>分享生活中的美好时刻</p>
+            </div>
+            
+            <form class="login-form" id="loginForm">
+                <h2 style="margin-bottom: 30px; color: #333;">用户登录</h2>
+                
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required placeholder="请输入用户名">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                </div>
+                
+                <button type="submit" class="btn">🚀 登录</button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 10px; font-size: 14px; color: #1976d2;">
+                    <strong>测试账号：</strong><br>
+                    普通用户: user1 / 123456<br>
+                    管理员: admin / admin123
+                </div>
+            </form>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="mainSection" class="hidden">
+            <!-- 头部 -->
+            <div class="header fade-in">
+                <div class="logo">📱 简约社交</div>
+                <div class="user-info">
+                    <span id="currentUser"></span>
+                    <button class="btn btn-secondary" onclick="logout()">🚪 退出登录</button>
+                </div>
+            </div>
+
+            <!-- 发帖表单 -->
+            <form class="post-form fade-in" id="postForm">
+                <h3 style="margin-bottom: 20px; color: #333;">📝 发布新动态</h3>
+                
+                <div class="form-group">
+                    <label for="postContent">内容</label>
+                    <textarea id="postContent" name="content" rows="4" placeholder="分享你的想法..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postImage">上传图片（可选）</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="postImage" accept="image/*">
+                        <div class="file-input-display" id="fileDisplay">
+                            📷 点击选择图片文件
+                        </div>
+                    </div>
+                    <img id="imagePreview" class="image-preview hidden">
+                </div>
+                
+                <button type="submit" class="btn">🎉 发布动态</button>
+            </form>
+
+            <!-- 动态列表 -->
+            <div class="posts-container">
+                <div id="postsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 预设用户数据
+        const users = {
+            'user1': { password: '123456', role: 'user', displayName: '用户1' },
+            'user2': { password: '123456', role: 'user', displayName: '用户2' },
+            'admin': { password: 'admin123', role: 'admin', displayName: '管理员' }
+        };
+
+        let currentUser = null;
+        let posts = JSON.parse(localStorage.getItem('socialPosts')) || [];
+
+        // 登录功能
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (users[username] && users[username].password === password) {
+                currentUser = {
+                    username: username,
+                    displayName: users[username].displayName,
+                    role: users[username].role
+                };
+                
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('mainSection').classList.remove('hidden');
+                
+                updateCurrentUserDisplay();
+                renderPosts();
+            } else {
+                alert('用户名或密码错误！');
+            }
+        });
+
+        // 发帖功能
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const content = document.getElementById('postContent').value;
+            const imageFile = document.getElementById('postImage').files[0];
+            
+            const post = {
+                id: Date.now(),
+                author: currentUser.displayName,
+                username: currentUser.username,
+                content: content,
+                timestamp: new Date().toLocaleString('zh-CN'),
+                image: null
+            };
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    post.image = e.target.result;
+                    addPost(post);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                addPost(post);
+            }
+        });
+
+        // 文件选择预览
+        document.getElementById('postImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const display = document.getElementById('fileDisplay');
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                display.textContent = `📷 ${file.name}`;
+                display.classList.add('has-file');
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                display.textContent = '📷 点击选择图片文件';
+                display.classList.remove('has-file');
+                preview.classList.add('hidden');
+            }
+        });
+
+        function addPost(post) {
+            posts.unshift(post);
+            localStorage.setItem('socialPosts', JSON.stringify(posts));
+            
+            // 清空表单
+            document.getElementById('postForm').reset();
+            document.getElementById('fileDisplay').textContent = '📷 点击选择图片文件';
+            document.getElementById('fileDisplay').classList.remove('has-file');
+            document.getElementById('imagePreview').classList.add('hidden');
+            
+            renderPosts();
+        }
+
+        function deletePost(postId) {
+            if (confirm('确定要删除这条动态吗？')) {
+                posts = posts.filter(post => post.id !== postId);
+                localStorage.setItem('socialPosts', JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="empty-state">还没有动态，快来发布第一条吧！🎉</div>';
+                return;
+            }
+            
+            container.innerHTML = posts.map(post => `
+                <div class="post-item fade-in">
+                    <div class="post-header">
+                        <div>
+                            <span class="post-author">${post.author}</span>
+                            ${currentUser.role === 'admin' ? '<span class="admin-badge">管理员</span>' : ''}
+                        </div>
+                        <span class="post-time">${post.timestamp}</span>
+                    </div>
+                    
+                    <div class="post-content">${post.content}</div>
+                    
+                    ${post.image ? `<img src="${post.image}" alt="用户图片" class="post-image">` : ''}
+                    
+                    ${(currentUser.role === 'admin' || currentUser.username === post.username) ? `
+                        <div class="admin-controls">
+                            <button class="btn btn-danger" onclick="deletePost(${post.id})">
+                                🗑️ 删除
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function updateCurrentUserDisplay() {
+            const userDisplay = document.getElementById('currentUser');
+            userDisplay.innerHTML = `
+                👋 ${currentUser.displayName}
+                ${currentUser.role === 'admin' ? '<span class="admin-badge">管理员</span>' : ''}
+            `;
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('mainSection').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 如果有测试数据，可以在这里添加
+            if (posts.length === 0) {
+                posts = [
+                    {
+                        id: 1,
+                        author: '管理员',
+                        username: 'admin',
+                        content: '欢迎来到简约社交平台！🎉 在这里你可以分享生活中的美好时刻。',
+                        timestamp: new Date().toLocaleString('zh-CN'),
+                        image: null
+                    }
+                ];
+                localStorage.setItem('socialPosts', JSON.stringify(posts));
+            }
+        });
+    </script>
+</body>
+</html>
